@@ -1,14 +1,16 @@
-const users = require('express').Router();
+const usersRouter = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 
 const filepathUsers = path.join(__dirname, '../data/users.json');
 
-users.get('/users', (req, res, next) => {
-
+// eslint-disable-next-line no-unused-vars
+usersRouter.get('/', (req, res, next) => {
   fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
     if (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
+      res.status(500).send({ message: 'Ошибка чтения файла users.json' });
       return;
     }
     res.send(data);
@@ -18,31 +20,34 @@ users.get('/users', (req, res, next) => {
 const doesUserExist = (req, res, next) => {
   fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
     if (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
       return;
     }
     const usersData = JSON.parse(data);
-    if (!usersData.find(u => u._id === req.params.id)) {
-      res.status(404).send({ "message": "Нет пользователя с таким id" });
+    if (!usersData.find((u) => u._id === req.params.id)) {
+      res.status(404).send({ message: 'Нет пользователя с таким id' });
       return;
     }
     next();
   });
-}
+};
 
+// eslint-disable-next-line no-unused-vars
 const sendUser = (req, res, next) => {
   fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
     if (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
       return;
     }
     const usersData = JSON.parse(data);
-    res.send(usersData.find(u => u._id === req.params.id));
+    res.send(usersData.find((u) => u._id === req.params.id));
   });
-}
+};
 
- users.get('/users/:id', doesUserExist);
+usersRouter.get('/:id', doesUserExist);
 
-users.get('/users/:id', sendUser);
+usersRouter.get('/:id', sendUser);
 
-module.exports = users;
+module.exports = usersRouter;
