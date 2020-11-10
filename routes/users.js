@@ -1,21 +1,9 @@
-const usersRouter = require('express').Router();
 const fs = require('fs');
 const path = require('path');
+const usersRouter = require('express').Router();
+const { sendAllUsers, sendUser, createUser } = require('../controllers/users');
 
 const filepathUsers = path.join(__dirname, '../data/users.json');
-
-// eslint-disable-next-line no-unused-vars
-usersRouter.get('/', (req, res, next) => {
-  fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
-    if (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      res.status(500).send({ message: 'Ошибка чтения файла users.json' });
-      return;
-    }
-    res.send(data);
-  });
-});
 
 const doesUserExist = (req, res, next) => {
   fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
@@ -33,21 +21,12 @@ const doesUserExist = (req, res, next) => {
   });
 };
 
-// eslint-disable-next-line no-unused-vars
-const sendUser = (req, res, next) => {
-  fs.readFile(filepathUsers, { encoding: 'utf8' }, (err, data) => {
-    if (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      return;
-    }
-    const usersData = JSON.parse(data);
-    res.send(usersData.find((u) => u._id === req.params.id));
-  });
-};
+usersRouter.get('/', sendAllUsers);
 
 usersRouter.get('/:id', doesUserExist);
 
 usersRouter.get('/:id', sendUser);
+
+usersRouter.post('/', createUser);
 
 module.exports = usersRouter;
