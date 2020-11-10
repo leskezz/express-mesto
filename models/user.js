@@ -16,14 +16,12 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    /* validate: {
-      validator: {
-        validator(v) {
-          return /https?:\/\/(www\.)?[^ #]+#?$/.test(v);
-        },
-        message: 'Введена некорректная ссылка',
+    validate: {
+      validator(v) {
+        return /https?:\/\/(www\.)?[^ #]+#?$/.test(v);
       },
-    }, */
+      message: 'Введена некорректная ссылка',
+    },
   },
 });
 
