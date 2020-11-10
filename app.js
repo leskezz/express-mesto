@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
 
@@ -14,12 +15,22 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5faa7ce2c27f969f0935bfce',
+  };
+
+  next();
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/cards', cardsRouter);
 app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
