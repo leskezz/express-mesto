@@ -23,7 +23,29 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => res.send({ data: card }))
+    .catch((err) => sendError(err, res));
+};
+
+const likeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true },
+  )
+    .populate('likes')
+    .then((card) => res.send({ data: card }))
+    .catch((err) => sendError(err, res));
+};
+
+const dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { new: true },
+  )
+    .populate('likes')
     .then((card) => res.send({ data: card }))
     .catch((err) => sendError(err, res));
 };
@@ -32,4 +54,6 @@ module.exports = {
   sendAllCards,
   createCard,
   deleteCard,
+  likeCard,
+  dislikeCard,
 };
