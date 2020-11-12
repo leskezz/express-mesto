@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cardsRouter = require('./routes/cards.js');
@@ -27,8 +26,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/cards', cardsRouter);
 app.use('/users', usersRouter);
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

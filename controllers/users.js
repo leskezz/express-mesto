@@ -1,10 +1,5 @@
 const User = require('../models/user.js');
-
-const sendError = (err, res) => {
-  if (err.name === 'ValidationError') return res.status(400).send({ message: `Переданы некорректные данные в методы создания пользователя, обновления аватара пользователя или профиля (${err})` });
-  if (err.name === 'CastError') return res.status(404).send({ message: `Пользователь с таким id не найден (${err})` });
-  return res.status(500).send({ message: `Произошла ошибка (${err})` });
-};
+const sendError = require('../utils/error');
 
 const sendAllUsers = (req, res) => {
   User.find({})
@@ -14,6 +9,7 @@ const sendAllUsers = (req, res) => {
 
 const sendUser = (req, res) => {
   User.findById(req.params.id)
+    .orFail(new Error('Not Found'))
     .then((user) => res.send({ data: user }))
     .catch((err) => sendError(err, res));
 };
@@ -37,6 +33,7 @@ const updateUser = (req, res) => {
       upsert: true, // если пользователь не найден, он будет создан
     },
   )
+    .orFail(new Error('Not Found'))
     .then((user) => res.send({ data: user }))
     .catch((err) => sendError(err, res));
 };
@@ -52,6 +49,7 @@ const updateAvatar = (req, res) => {
       upsert: true, // если пользователь не найден, он будет создан
     },
   )
+    .orFail(new Error('Not Found'))
     .then((user) => res.send({ data: user }))
     .catch((err) => sendError(err, res));
 };

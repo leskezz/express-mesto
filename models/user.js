@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        return /https?:\/\/(www\.)?[^ #]+#?$/.test(v);
+        // eslint-disable-next-line no-useless-escape
+        return /^https?:\/\/(www\.)?[\w-._~:\/?#\[\]@!$&'()*+,;=]+(\.[a-z]+)[[\w-._~:\/?#\[\]@!$&'()*+,;=]*#?$/.test(v);
       },
       message: 'Введена некорректная ссылка',
     },
